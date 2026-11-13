@@ -71,7 +71,7 @@ html = """
     <div id="messages"></div>
 
     <script>
-        const ws = new WebSocket("ws://" + location.host + "/ws");
+        const ws = new WebSocket("wss://" + location.host + "/wss");
         const messages = document.getElementById("messages");
         const input = document.getElementById("msg");
         const nameInput = document.getElementById("name");
