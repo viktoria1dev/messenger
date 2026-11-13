@@ -9,7 +9,7 @@ clients = []
 
 # --- База данных ---
 def init_db():
-    conn = sqlite3.connect("chat.db")
+    conn = sqlite3.connect("/data/chat.db")
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS messages (
@@ -23,7 +23,7 @@ def init_db():
     conn.close()
 
 def save_message(username, text):
-    conn = sqlite3.connect("chat.db")
+    conn = sqlite3.connect("/data/chat.db")
     cur = conn.cursor()
     cur.execute(
         "INSERT INTO messages (username, text, time) VALUES (?, ?, ?)",
@@ -33,7 +33,7 @@ def save_message(username, text):
     conn.close()
 
 def get_last_messages(limit=50):
-    conn = sqlite3.connect("chat.db")
+    conn = sqlite3.connect("/data/chat.db")
     cur = conn.cursor()
     cur.execute("SELECT username, text, time FROM messages ORDER BY id DESC LIMIT ?", (limit,))
     rows = cur.fetchall()
@@ -75,16 +75,18 @@ html = """
         const messages = document.getElementById("messages");
         const input = document.getElementById("msg");
         const nameInput = document.getElementById("name");
-        fetch("/history")
-            .then(res => res.json())
-            .then(data => {
-                data.forEach(m => addMessage(m[0], m[1], m[2], false));
-            });
+        
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             addMessage(data.username, data.text, data.time, false);
         };
+
+        fetch("/history")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(m => addMessage(m[0], m[1], m[2], false));
+            });
 
         function addMessage(username, text, time, isMine) {
             const div = document.createElement("div");
